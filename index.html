@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Danh sách video tự động</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="video.js"></script>
+  <style>
+    .copy-all {
+      padding: 8px 12px;
+      border: 2px solid #FFD600;
+      border-radius: 20px;
+      background: transparent;
+      color: #FFD600;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+    .copy-all:hover {
+      background: #FFD600;
+      color: #111;
+    }
+    .copy-btn {
+      float: right;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: #FFD600;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1 class="logo">XXX H4X</h1>
+    <div class="header-actions">
+      <button class="copy-all" id="copyAll">📋 Sao chép tất cả</button>
+      <span class="theme-toggle" id="themeToggle">🌙</span>
+      <span class="user-icon">👤</span>
+    </div>
+  </header>
+
+  <main class="main-content" id="videoContainer"></main>
+
+  <script>
+    const body = document.body;
+    const toggle = document.getElementById("themeToggle");
+
+    function updateIcon() {
+      toggle.textContent = body.classList.contains("light") ? "☀️" : "🌙";
+    }
+
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      body.classList.add("light");
+    } else if (!savedTheme) {
+      const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+      if (prefersLight) body.classList.add("light");
+    }
+    updateIcon();
+
+    toggle.addEventListener("click", () => {
+      body.classList.toggle("light");
+      localStorage.setItem("theme", body.classList.contains("light") ? "light" : "dark");
+      updateIcon();
+    });
+
+    const container = document.getElementById("videoContainer");
+    const allLinks = [];
+
+    videos.forEach((videoSrc, index) => {
+      allLinks.push(videoSrc);
+      const section = document.createElement("section");
+      section.className = "post";
+      section.innerHTML = `
+        <div class="post-time">
+          Video ${index + 1}
+          <button class="copy-btn" onclick="navigator.clipboard.writeText('${videoSrc}')">📋</button>
+        </div>
+        <div class="post-body">
+          <p>${videoSrc}</p>
+          <video src="${videoSrc}" controls width="100%"></video>
+        </div>
+      `;
+      container.appendChild(section);
+    });
+
+    document.getElementById("copyAll").addEventListener("click", () => {
+      navigator.clipboard.writeText(allLinks.join("\n"));
+      alert("✅ Đã sao chép tất cả liên kết video!");
+    });
+  </script>
+</body>
+</html>
